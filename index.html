@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parottasalna DSA | Daily Persistent Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono&display=swap');
+
+        :root {
+            --bg: #09090b; --card: #111113; --border: #27272a;
+            --text: #fafafa; --muted: #a1a1aa; --accent: #6366f1;
+            --meet: #ea4335; --success: #10b981;
+        }
+
+        body.light-theme {
+            --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+            --text: #0f172a; --muted: #64748b; --accent: #4f46e5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 5rem; transition: background 0.3s, color 0.3s; }
+
+        /* --- Header --- */
+        header { 
+            background: var(--bg); border-bottom: 1px solid var(--border); 
+            padding: 1rem 5%; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(12px);
+        }
+        .header-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.25rem; letter-spacing: -1px; }
+        
+        .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .nav-links a:hover { color: var(--accent); }
+        
+        .progress-widget { display: flex; align-items: center; gap: 1rem; width: 150px; }
+        #stats-text { font-size: 0.65rem; font-family: 'JetBrains Mono'; color: var(--muted); text-align: right; white-space: nowrap; }
+        .pg-bg { flex: 1; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
+        #pg-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.8s; }
+
+        /* --- POTD Section --- */
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 5%; }
+        
+        .potd-hero { 
+            margin: 3rem 0; background: var(--card); border: 2px solid var(--accent); 
+            border-radius: 24px; padding: 3rem; text-align: center; position: relative;
+        }
+        .live-tag { 
+            background: var(--meet); color: #fff; padding: 4px 14px; border-radius: 20px; 
+            font-size: 0.7rem; font-weight: 900; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); } 100% { opacity: 1; transform: translateX(-50%) scale(1); } }
+
+        .btn-meet { 
+            display: inline-flex; align-items: center; gap: 8px; background: var(--text); color: var(--bg); 
+            padding: 0.9rem 2.2rem; border-radius: 12px; text-decoration: none; font-weight: 800; margin-top: 1.5rem; 
+        }
+
+        /* --- Filter Bar --- */
+        .filter-section { 
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; 
+        }
+        .filter-section input, .filter-section select { 
+            background: var(--card); border: 1px solid var(--border); color: var(--text); 
+            padding: 12px; border-radius: 10px; outline: none; font-size: 0.85rem; 
+        }
+        .filter-section input:focus { border-color: var(--accent); }
+
+        /* --- Table Styling --- */
+        .table-wrapper { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+        th { background: rgba(128,128,128,0.05); padding: 1.2rem 1rem; text-align: left; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        
+        tr:hover { background: rgba(128,128,128,0.02); }
+        tr.completed { opacity: 0.4; }
+        tr.completed .name-text { text-decoration: line-through; }
+
+        .mono { font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--muted); }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        .level-Easy { color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        .level-Medium { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+        .level-Hard { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+        .res-link { text-decoration: none; margin-right: 12px; font-size: 1.2rem; filter: grayscale(1); }
+        .res-link:hover { filter: grayscale(0); }
+
+        /* --- Custom Checkbox --- */
+        input[type="checkbox"] { appearance: none; width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; position: relative; vertical-align: middle; }
+        input[type="checkbox"]:checked { background: var(--success); border-color: var(--success); }
+        input[type="checkbox"]:checked::after { content: '✓'; color: white; position: absolute; left: 4px; top: -1px; font-size: 13px; }
+
+        /* --- Pagination --- */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 2rem; }
+        .pg-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        #themeToggle { background:none; border:none; cursor:pointer; font-size:1.1rem; padding: 5px; border-radius: 50%; transition: 0.2s; }
+        #themeToggle:hover { background: rgba(128,128,128,0.1); }
+
+        @media (max-width: 768px) { .filter-section { grid-template-columns: 1fr; } .hide-mobile { display: none; } }
+    </style>
+</head>
+<body class="dark-theme">
+
+    <header>
+        <div class="header-container">
+            <div class="logo">DSA With Parottasalna</div>
+            <div class="nav-links">
+                <a href="#">Blog</a>
+                <a href="#" style="color: #25d366;">WhatsApp</a>
+                <a href="#" style="color: #ff0000;">YouTube</a>
+                <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+                <div class="progress-widget">
+                    <div id="stats-text">0/0</div>
+                    <div class="pg-bg"><div id="pg-fill"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="potd-hero">
+            <div class="potd-hero" style="border-style: dashed; opacity: 0.5;">
+                <p>Connecting to daily log...</p>
+            </div>
+        </section>
+
+        <section class="archive-section">
+            <div class="filter-section">
+                <input type="text" id="search" placeholder="Search by name, ID, or Platform ID...">
+                <select id="f-plat"><option value="">All Platforms</option></select>
+                <select id="f-cat"><option value="">All Categories</option></select>
+                <select id="f-lvl"><option value="">All Levels</option></select>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 60px; text-align:center;">Done</th>
+                            <th style="width: 80px;">#ID</th>
+                            <th style="width: 100px;">Plat ID</th>
+                            <th style="width: 120px;">Platform</th>
+                            <th>Problem Name</th>
+                            <th>Category</th>
+                            <th style="width: 100px;">Level</th>
+                            <th style="width: 120px;">Resources</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button class="pg-btn" id="prev" onclick="changePage(-1)">← Previous</button>
+                <span id="pgInfo" class="mono" style="font-size: 0.8rem;"></span>
+                <button class="pg-btn" id="next" onclick="changePage(1)">Next →</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let allData = [];
+        let currentPage = 1;
+        const pageSize = 10;
+        let solved = JSON.parse(localStorage.getItem('dsa_track_v3')) || [];
+
+        // --- THEME ENGINE ---
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('dsa_theme_v3') || 'dark';
+            const toggleBtn = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                toggleBtn.innerText = '☀️';
+            } else {
+                document.body.classList.remove('light-theme');
+                toggleBtn.innerText = '🌙';
+            }
+        }
+
+        function toggleTheme() {
+            const isLight = document.body.classList.toggle('light-theme');
+            const theme = isLight ? 'light' : 'dark';
+            localStorage.setItem('dsa_theme_v3', theme);
+            document.getElementById('themeToggle').innerText = isLight ? '☀️' : '🌙';
+        }
+
+        // --- DATA ENGINE ---
+        async function init() {
+            applyTheme(); // Run theme check immediately
+            try {
+                const res = await fetch('problems.json');
+                allData = await res.json();
+                
+                populateFilters();
+                renderPOTD(allData[0]); 
+                updateView();
+            } catch (err) {
+                console.error("Fetch failed. Ensure problems.json is valid and hosted.");
+            }
+        }
+
+        function populateFilters() {
+            const getUnique = (key) => [...new Set(allData.map(q => q[key]))].filter(Boolean).sort();
+            const fill = (id, list) => {
+                const el = document.getElementById(id);
+                list.forEach(i => { el.innerHTML += `<option value="${i}">${i}</option>`; });
+            };
+            fill('f-plat', getUnique('platform'));
+            fill('f-cat', getUnique('category'));
+            fill('f-lvl', getUnique('level'));
+        }
+
+        function renderPOTD(q) {
+            const hero = document.getElementById('potd-hero');
+            if(!q) return;
+            const isDone = solved.includes(q.id);
+
+            hero.innerHTML = `
+                <div class="potd-hero ${isDone ? 'completed' : ''}">
+                    ${q.meetLink ? '<div class="live-tag">LIVE STUDY SESSION</div>' : ''}
+                    <div style="margin-bottom:1.5rem;">
+                        <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleSolved(${q.id})" id="chk-hero">
+                        <label for="chk-hero" style="font-size:0.75rem; color:var(--muted); margin-left:10px; cursor:pointer;">Mark Today's Task Done</label>
+                    </div>
+                    <small style="color:var(--accent); font-weight:800; letter-spacing:2px; text-transform:uppercase;">Today's Pick • ${q.date}</small>
+                    <h2 style="font-size: 2.8rem; margin: 0.5rem 0; font-weight:800; letter-spacing:-1px; line-height: 1.1;">${q.name}</h2>
+                    <p style="color:var(--muted); font-family:'JetBrains Mono'; font-size:0.9rem;">
+                        ${q.platform} #${q.platformID} | ${q.category} | ${q.level}
+                    </p>
+                    ${q.meetLink ? `<a href="${q.meetLink}" class="btn-meet" target="_blank">Join Google Meet</a>` : ''}
+                </div>
+            `;
+        }
+
+        function updateView() {
+            const term = document.getElementById('search').value.toLowerCase();
+            const plat = document.getElementById('f-plat').value;
+            const cat = document.getElementById('f-cat').value;
+            const lvl = document.getElementById('f-lvl').value;
+
+            const filtered = allData.filter(q => {
+                return (q.name.toLowerCase().includes(term) || q.id.toString() === term || q.platformID.toLowerCase().includes(term)) &&
+                       (plat === "" || q.platform === plat) &&
+                       (cat === "" || q.category === cat) &&
+                       (lvl === "" || q.level === lvl);
+            });
+
+            const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+            if(currentPage > totalPages) currentPage = totalPages;
+            
+            const start = (currentPage - 1) * pageSize;
+            const items = filtered.slice(start, start + pageSize);
+
+            document.getElementById('table-body').innerHTML = items.map(q => {
+                const isDone = solved.includes(q.id);
+                return `
+                    <tr class="${isDone ? 'completed' : ''}">
+                        <td style="text-align:center;"><input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleSolved(${q.id})"></td>
+                        <td class="mono">#${q.id}</td>
+                        <td class="mono">${q.platformID}</td>
+                        <td style="color:var(--muted)">${q.platform}</td>
+                        <td class="name-text" style="font-weight:600;">${q.name}</td>
+                        <td style="font-size:0.8rem; color:var(--muted)">${q.category}</td>
+                        <td><span class="badge level-${q.level}">${q.level}</span></td>
+                        <td>
+                            <a href="${q.solution}" target="_blank" class="res-link" title="Code Solution">📄</a>
+                            <a href="${q.video}" target="_blank" class="res-link" title="Video Explanation">🎬</a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('pgInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prev').disabled = currentPage === 1;
+            document.getElementById('next').disabled = currentPage === totalPages;
+            
+            // Stats Sync
+            const pct = allData.length > 0 ? (solved.length / allData.length) * 100 : 0;
+            document.getElementById('pg-fill').style.width = pct + '%';
+            document.getElementById('stats-text').innerText = `${solved.length}/${allData.length} SOLVED`;
+        }
+
+        function toggleSolved(id) {
+            solved = solved.includes(id) ? solved.filter(i => i !== id) : [...solved, id];
+            localStorage.setItem('dsa_track_v3', JSON.stringify(solved));
+            renderPOTD(allData[0]);
+            updateView();
+        }
+
+        function changePage(step) { currentPage += step; updateView(); }
+
+        ['search', 'f-plat', 'f-cat', 'f-lvl'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => { currentPage = 1; updateView(); });
+        });
+
+        init();
+    </script>
+</body>
+</html>
