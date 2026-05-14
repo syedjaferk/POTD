@@ -1,16 +1,28 @@
 [
   {
+    "id": 21,
+    "platformID": "#111",
+    "platform": "Leetcode",
+    "name": "Minimum Depth of Binary Tree",
+    "category": "Tree",
+    "level": "Easy",
+    "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/",
+    "solution": "",
+    "video": "",
+    "date": "2026-05-15 6:30 PM IST",
+    "meetLink": "https://meet.google.com/icf-zwmr-anf"
+  },
+  {
     "id": 20,
     "platformID": "#110",
     "platform": "Leetcode",
     "name": "Balanced Binary Tree",
     "category": "Tree",
     "level": "Easy",
-    "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/",
+    "url": "https://leetcode.com/problems/balanced-binary-tree/",
     "solution": "",
-    "video": "https://youtu.be/9YX_f7O2yzA",
-    "date": "2026-05-14 6:30 PM IST",
-    "meetLink": "https://meet.google.com/icf-zwmr-anf"
+    "video": "",
+    "date": "2026-05-14 6:30 PM IST"
   },
   {
     "id": 19,
