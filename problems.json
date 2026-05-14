@@ -1,5 +1,18 @@
 [
   {
+    "id": 20,
+    "platformID": "#110",
+    "platform": "Leetcode",
+    "name": "Balanced Binary Tree",
+    "category": "Tree",
+    "level": "Easy",
+    "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/",
+    "solution": "",
+    "video": "https://youtu.be/9YX_f7O2yzA",
+    "date": "2026-05-14 6:30 PM IST",
+    "meetLink": "https://meet.google.com/icf-zwmr-anf"
+  },
+  {
     "id": 19,
     "platformID": "#108",
     "platform": "Leetcode",
@@ -8,9 +21,8 @@
     "level": "Easy",
     "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/",
     "solution": "",
-    "video": "",
-    "date": "2026-05-11 6:30 PM IST",
-    "meetLink": "https://meet.google.com/icf-zwmr-anf"
+    "video": "https://youtu.be/9YX_f7O2yzA",
+    "date": "2026-05-13 6:30 PM IST"
   },
   {
     "id": 18,
